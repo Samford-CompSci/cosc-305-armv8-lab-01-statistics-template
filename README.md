@@ -1,42 +1,18 @@
-# Lab 1 — Array statistics and classification
+# Lab 1 · Array sum and positive count
 
-Traverse signed 64-bit integers using nested procedures and explicit memory access.
+Write a loop in [src/analyze_array.s](src/analyze_array.s) that adds the values
+in an array and counts how many are positive.
 
-## Start in GitHub Codespaces
+1. Open your assignment repository. Select **Code → Codespaces → Create codespace on main**.
+2. Run `make run` in the terminal. The starter stores two zeros, so you'll see
+   your results next to the expected sum of **8** and positive count of **2**.
+3. Follow the [assignment](ASSIGNMENT.md) and edit only `src/analyze_array.s`.
+   Run `make run` as you work. Run `make test` to check other arrays.
+4. Commit and push your changes. See **Actions → Autograding** for feedback.
 
-1. Create your own repository using **Use this template → Create a new repository**,
-   or open the private assignment repository your instructor provides.
-2. Select **Code → Codespaces → Create codespace on main**. Wait for the container build.
-3. In the terminal, run `make run`. For a lab, the initial TODO exit is expected.
-4. Read the [assignment](ASSIGNMENT.md), edit `src/*.s`, and run `make test`.
-5. Commit and push your work. Open **Actions → Autograding** to inspect feedback.
+The Codespace includes the tools. On Ubuntu or Debian, you can also install
+them with `sudo bash scripts/install-tools.sh`.
 
-```sh
-make                 # assemble and link
-make run             # execute main under QEMU
-make test            # full public test suite
-make debug           # terminal 1: wait for GDB
-make gdb             # terminal 2: connect to the waiting program
-make disassemble     # inspect assembled instructions
-```
-
-[LEGv8 → AArch64 guide](docs/legv8-to-aarch64.md) ·
-[GDB walkthrough](docs/debugging.md) ·
-[Grading and instructor setup](docs/grading.md)
-
-## Environment
-
-Ubuntu 24.04, GNU AArch64 binutils, QEMU user mode, Make, and
-`gdb-multiarch`. Git and CA certificates support the Codespaces workflow.
-The container supplies everything; there are no required editor extensions,
-C compiler, C runtime, Python packages, or guest ARM operating system.
-For an existing Ubuntu/Debian machine, use
-`sudo bash scripts/install-tools.sh` once.
-
-Code is real ARMv8-A AArch64 GNU assembly. The instruction list in the
-transition guide is a recommendation, not a whitelist. Preserve the
-documented interfaces and meaningful helper calls.
-
-Edit `src/` for your submission. `support/`, `tests/`, and the build scripts
-are supplied infrastructure. Generated files stay in ignored `build/`.
-See [grading](docs/grading.md) for the automated/manual point split.
+[LEGv8 syntax notes](docs/legv8-to-aarch64.md) ·
+[Optional debugger walkthrough](docs/debugging.md) ·
+[Grading](docs/grading.md)

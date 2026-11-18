@@ -1,56 +1,42 @@
-# Lab 1: Array statistics and classification
+# Lab 1 · Array sum and positive count
 
-Implement `main`, `analyze_array`, `classify_value`, and `update_min_max`
-in their corresponding `src/*.s` files. Use AAPCS64 and preserve live values
-across calls. Recommended concepts: `ldur`, pointer arithmetic, loops,
-conditional branches, `bl`, stack frames, and `ret`.
+In the LEGv8 simulator, you can use `BL` to call a procedure, `BR X30` to
+return, and `STUR` to put a value in memory. Here the supplied code calls your
+procedure, `analyze_array`, and shows the two values it stores in memory.
+The result stores and return are already in your starter file.
 
-## Procedure interfaces
+## What your loop receives
 
-| Procedure | Arguments | Result / writes |
-| --- | --- | --- |
-| `classify_value` | `x0`: signed 64-bit value | `x0`: -1 negative, 0 zero, 1 positive |
-| `update_min_max` | `x0`: value; `x1`: results address | Update only the minimum/maximum fields; no return value required |
-| `analyze_array` | `x0`: array address; `x1`: element count; `x2`: results address | Write all six result fields; no return value required |
-| `main` | None | Analyze the supplied demo array, store in `demo_results`, return 0 |
-
-Results are six consecutive 64-bit fields:
-
-| Byte offset | Field |
+| Register | Value on entry |
 | --- | --- |
-| 0 | Minimum, signed |
-| 8 | Maximum, signed |
-| 16 | Sum, signed |
-| 24 | Positive count |
-| 32 | Negative count |
-| 40 | Zero count |
+| `x0` | Address of the first array element |
+| `x1` | Number of elements |
+| `x2` | Address of the two result slots |
 
-`analyze_array` initializes every result field on each call. For an empty
-array it writes six zeros and must not dereference the array pointer (which
-may be zero). For nonempty input, initialize minimum and maximum from the
-first element, then process all elements. Sums and intermediate running sums
-in the test inputs fit signed 64 bits; overflow handling is outside scope.
-Counts and lengths are nonnegative 64-bit values.
+Each array element is a signed 64-bit integer and takes 8 bytes. Keep the
+input array intact. The starter uses `x3` for the sum and `x4` for the positive
+count. You can use `x5`–`x7` for temporary values and change `x0` and `x1`
+as you go. Keep `x2` available for the final stores and `x30` for the return.
 
-For every element, `analyze_array` must call `classify_value` and use its
-returned category to update the count. It must also call `update_min_max`
-and use that procedure to maintain the extrema. Do not duplicate those
-helpers' decisions in the caller. `update_min_max` assumes its two fields
-already contain valid current extrema and leaves the other four fields alone.
-The input array is read-only; output storage is valid, separate, and 48 bytes.
+## Build the loop in two steps
 
-## Main integration
+1. **Sum the array.** Before loading an element, check whether `x1` is zero.
+   If it is, branch to `store_results`. Otherwise load the current value
+   with `ldur x5, [x0, #0]` and add it to the running sum. Move `x0` forward
+   by 8 bytes, decrease `x1` by 1, and repeat. Run `make run` and check that
+   you get a sum of 8.
+2. **Count positive elements.** Inside the same loop, compare the current
+   value with zero. Increment the count only when the value is greater than
+   zero. Run `make run` again and check that the count is 2.
 
-Keep the supplied global data labels. `demo_array` contains
-`[-4, 0, 7, -2, 7, 0]`; `demo_length` holds 6. `main` loads their address/count,
-calls `analyze_array`, and writes `demo_results`. Expected results:
-`[-4, 7, 8, 2, 2, 2]`. Output printing is optional; GDB can inspect the buffer.
+In AArch64, use `add x0, x0, #8` for LEGv8's `ADDI X0, X0, #8`.
+Use `cmp x5, #0` followed by `b.le` to branch when the element is zero or
+negative. See the [syntax notes](docs/legv8-to-aarch64.md) for short examples.
 
-## Work and checks
+The starter stores the sum at `[x2, #0]` and the positive count at
+`[x2, #8]`. For an empty array, store two zeros and skip all array loads.
+Assume the running sum fits in a signed 64-bit register.
 
-Start with `classify_value`, then `update_min_max`, then the array loop and
-`main`. Run `make test GROUP=classify`, `GROUP=minmax`, `GROUP=analyze`,
-or `GROUP=main`, followed by `make test` for the full suite.
-See [grading](docs/grading.md): 80 automated points and 20 manual points.
-The recommended instruction subset is advisory. Meaningful helper calls,
-correct interfaces, and stack/register discipline are required.
+`make run` uses `[-4, 0, 7, -2, 7, 0]`. Run `make test` when both demo
+results match. The tests include empty arrays, all-negative arrays, zeros,
+and values that need 64-bit registers.

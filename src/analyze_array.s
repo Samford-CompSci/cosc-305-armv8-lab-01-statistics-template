@@ -1,11 +1,14 @@
-// x0=array, x1=length, x2=48-byte results; calls both helpers for each element.
-.text
-.global analyze_array
-.type analyze_array, %function
+// x0: address of the first element
+// x1: number of elements
+// x2: address where the two results go
 analyze_array:
-    .cfi_startproc
-    // TODO: replace this branch with your implementation.
-    b not_implemented
-    .cfi_endproc
-.size analyze_array, .-analyze_array
-.section .note.GNU-stack,"",@progbits
+    mov x3, #0              // running sum
+    mov x4, #0              // positive count
+
+    // TODO 1: Walk the array and add each element to x3.
+    // TODO 2: While walking the array, increment x4 for each value > 0.
+
+store_results:
+    stur x3, [x2, #0]
+    stur x4, [x2, #8]
+    br x30
