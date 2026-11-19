@@ -8,7 +8,8 @@ Traverse signed 64-bit integers using nested procedures and explicit memory acce
    or open the private assignment repository your instructor provides.
 2. Select **Code → Codespaces → Create codespace on main**. Wait for the container build.
 3. In the terminal, run `make run`. For a lab, the initial TODO exit is expected.
-4. Read the [assignment](ASSIGNMENT.md), edit `src/*.s`, and run `make test`.
+4. Follow [Getting started](ASSIGNMENT.md#getting-started) to edit your first
+   procedure, run its tests, and debug it in GDB.
 5. Commit and push your work. Open **Actions → Autograding** to inspect feedback.
 
 ```sh
@@ -21,6 +22,7 @@ make disassemble     # inspect assembled instructions
 ```
 
 [LEGv8 → AArch64 guide](docs/legv8-to-aarch64.md) ·
+[Assembler directives](docs/assembler-directives.md) ·
 [GDB walkthrough](docs/debugging.md) ·
 [Grading and instructor setup](docs/grading.md)
 

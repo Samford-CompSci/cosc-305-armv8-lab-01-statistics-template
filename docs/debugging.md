@@ -3,6 +3,8 @@
 All commands below run **inside your Codespace**. No local ARM computer,
 VS Code extension, port forwarding, or separate `gdbserver` is needed.
 The Makefile assembles with debug information (`-g`) and keeps symbols.
+For your first Lab 1 session, follow [Getting started](../ASSIGNMENT.md#getting-started)
+to step through a test of `classify_value`.
 
 ## First session: two terminals
 
@@ -102,10 +104,13 @@ preserved registers and restored SP; correct-looking output alone may not pass.
   QEMU process still runs the old executable.
 - **Connection refused:** start `make debug` first and use the same port.
 - **Address already in use:** stop the previous QEMU or use another port.
-- **QEMU DSO warning:** some bundled QEMU/GDB versions print a warning about a system-supplied DSO string table when connecting. In our container, named breakpoints, source lines, registers, and backtraces still work.
+- **QEMU DSO warning:** some bundled QEMU/GDB versions print a warning about a
+  system-supplied DSO string table when connecting. You can proceed with
+  breakpoints, instruction stepping, and register inspection.
 - **No source lines:** use `make clean && make`, then load the matching executable.
-- **`bt` or `finish` looks wrong:** assembly needs correct frames/unwind
-  annotations. Inspect SP, LR, and disassembly directly; use `si` and breakpoints.
+- **`bt` or `finish` looks wrong:** your lab functions omit unwind annotations.
+  GDB may have to infer saved register locations. Use `si` and breakpoints
+  to follow calls, and inspect SP, LR, and stack memory directly.
 - **Infinite loop:** interrupt from GDB with Ctrl+C; if it does not respond,
   stop QEMU from terminal 1 and restart the session. Automated tests time out.
 

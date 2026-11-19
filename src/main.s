@@ -3,10 +3,8 @@
 .global main
 .type main, %function
 main:
-    .cfi_startproc
     // TODO: replace this branch with your implementation.
     b not_implemented
-    .cfi_endproc
 .size main, .-main
 .section .note.GNU-stack,"",@progbits
 

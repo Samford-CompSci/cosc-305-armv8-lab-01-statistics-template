@@ -5,6 +5,86 @@ in their corresponding `src/*.s` files. Use AAPCS64 and preserve live values
 across calls. Recommended concepts: `ldur`, pointer arithmetic, loops,
 conditional branches, `bl`, stack frames, and `ret`.
 
+## Getting started
+
+### 1. Build the starter in your Codespace
+
+Open **Terminal → New Terminal** and run these commands in the repository
+folder. You should see the `Makefile` in the file explorer.
+
+```sh
+make
+make run
+```
+
+`make` assembles and links the starter. `make run` prints a TODO message
+because `main` is still a stub. The program exits with status 99 at this stage.
+
+### 2. Get your first tests to pass
+
+Open `src/classify_value.s`. The input arrives in `x0`, and you return the
+category in the same register. Replace the TODO comment and the
+`b not_implemented` instruction under `classify_value:` with these two
+temporary instructions:
+
+```asm
+    mov x0, #-1
+    ret
+```
+
+Leave the lines around the function in place. The
+[assembler directives guide](docs/assembler-directives.md) explains them.
+Save the file and run:
+
+```sh
+make test GROUP=classify
+```
+
+Two of the six tests pass because their inputs are negative. The other four
+fail because this first attempt returns `-1` for every input. The tests call
+`classify_value` directly, so you can work on it while `main` is still a stub.
+
+### 3. Watch one failing test in GDB
+
+In **terminal 1**, start the positive-input test and have QEMU pause for GDB:
+
+```sh
+qemu-aarch64 -g 1234 build/tests/classify-positive
+```
+
+The terminal will look idle while QEMU waits. Use the **+** button in the
+terminal panel to open **terminal 2**, then run:
+
+```sh
+gdb-multiarch -q build/tests/classify-positive
+```
+
+At the `(gdb)` prompt, enter these commands one at a time:
+
+```gdb
+target remote localhost:1234
+break classify_value
+continue
+p/d $x0
+x/i $pc
+si
+p/d $x0
+```
+
+The first `p/d $x0` shows the input, **9**. `x/i $pc` shows the next
+instruction. `si` executes that one instruction, and the second
+`p/d $x0` shows the result, **-1**. This input should return **1**.
+Type `continue` to let the test report its failure, then `quit` to exit GDB.
+For help with the two terminals or restarting a session, see the
+[GDB walkthrough](docs/debugging.md).
+
+### 4. Finish the classifier
+
+Use `cmp x0, #0` and conditional branches to decide which result goes into
+`x0`. Make sure each path returns with `ret`. Save and rerun
+`make test GROUP=classify`. Aim for **6/6 passed** before moving on to
+`update_min_max`.
+
 ## Procedure interfaces
 
 | Procedure | Arguments | Result / writes |
@@ -48,9 +128,13 @@ calls `analyze_array`, and writes `demo_results`. Expected results:
 
 ## Work and checks
 
-Start with `classify_value`, then `update_min_max`, then the array loop and
-`main`. Run `make test GROUP=classify`, `GROUP=minmax`, `GROUP=analyze`,
-or `GROUP=main`, followed by `make test` for the full suite.
-See [grading](docs/grading.md): 80 automated points and 20 manual points.
-The recommended instruction subset is advisory. Meaningful helper calls,
-correct interfaces, and stack/register discipline are required.
+After the classifier passes, build up the rest of the program in this order:
+
+1. Implement `update_min_max` and run `make test GROUP=minmax`.
+2. Implement `analyze_array`, using both helpers, and run `make test GROUP=analyze`.
+3. Implement `main` and run `make test GROUP=main`.
+4. Run `make test` for the full suite before submitting.
+
+See [grading](docs/grading.md) for the 80 automated and 20 manual points.
+The recommended instruction subset is advisory. The assignment requires
+meaningful helper calls, correct interfaces, and stack and register discipline.

@@ -89,26 +89,18 @@ A non-leaf procedure can start with this frame (adapt the frame if needed):
 .global example
 .type example, %function
 example:
-    .cfi_startproc
     stp x29, x30, [sp, #-16]!
-    .cfi_def_cfa_offset 16
-    .cfi_offset 29, -16
-    .cfi_offset 30, -8
     mov x29, sp
     bl helper
     ldp x29, x30, [sp], #16
-    .cfi_restore 29
-    .cfi_restore 30
-    .cfi_def_cfa_offset 0
     ret
-    .cfi_endproc
 .size example, .-example
 ```
 
 Saving LR alone does not preserve arguments that a helper may overwrite.
 Store live values in saved registers or stack slots, preserving those saved
-registers in your own frame. The `.cfi_*` annotations describe the frame to
-GDB; they do not generate CPU instructions or repair a broken frame.
+registers in your own frame. See the [assembler directives guide](assembler-directives.md)
+for the lines around the function body.
 
 ## Recommended instruction vocabulary (not a restriction)
 

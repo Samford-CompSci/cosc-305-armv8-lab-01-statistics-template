@@ -3,9 +3,7 @@
 .global analyze_array
 .type analyze_array, %function
 analyze_array:
-    .cfi_startproc
     // TODO: replace this branch with your implementation.
     b not_implemented
-    .cfi_endproc
 .size analyze_array, .-analyze_array
 .section .note.GNU-stack,"",@progbits
